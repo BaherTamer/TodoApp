@@ -16,19 +16,25 @@ struct CategoryGridView: View {
     var body: some View {
         LazyVGrid(columns: ColumnGrid) {
             ForEach(todoCategories) { category in
-                VStack(alignment: .center) {
-                    Text(category.icon!)
-                        .font(.system(size: 50))
-                        .padding()
-                        .background(CategoryColor.getColor(category.color!).gradient)
-                        .clipShape(Circle())
+                NavigationLink(value: category) {
+                    VStack(alignment: .center) {
+                        Text(category.icon!)
+                            .font(.system(size: 50))
+                            .padding()
+                            .background(CategoryColor.getColor(category.color!).gradient)
+                            .clipShape(Circle())
 
-                    Text(category.name!)
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2, reservesSpace: true)
+                        Text(category.name!)
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2, reservesSpace: true)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
+        }
+        .navigationDestination(for: TodoCategory.self) { todoCategory in
+            CategoryTodoItemsView(todoCategory: todoCategory)
         }
     }
 }

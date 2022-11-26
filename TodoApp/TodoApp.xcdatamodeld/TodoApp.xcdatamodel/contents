@@ -5,5 +5,12 @@
         <attribute name="dateCreated" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="icon" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
+        <relationship name="todos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TodoItem" inverseName="category" inverseEntity="TodoItem"/>
+    </entity>
+    <entity name="TodoItem" representedClassName="TodoItem" syncable="YES" codeGenerationType="category">
+        <attribute name="dateCreated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TodoCategory" inverseName="todos" inverseEntity="TodoCategory"/>
     </entity>
 </model>

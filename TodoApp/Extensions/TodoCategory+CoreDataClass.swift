@@ -20,4 +20,11 @@ public class TodoCategory: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(key: "dateCreated", ascending: false)]
         return request
     }
+
+    static func todoItemsByCategoryRequest(_ todoCategory: TodoCategory) -> NSFetchRequest<TodoItem> {
+            let request = TodoItem.fetchRequest()
+            request.sortDescriptors = [NSSortDescriptor(key: "dateCreated", ascending: false)]
+            request.predicate = NSPredicate(format: "category = %@", todoCategory)
+            return request
+        }
 }
