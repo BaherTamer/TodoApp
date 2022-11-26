@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum CategoryColor: String {
+enum CategoryColor: String, CaseIterable {
     case red = "red"
     case orange = "orange"
     case yellow = "yellow"
@@ -51,5 +51,17 @@ extension CategoryColor {
         case .gray:
             return Color.gray
         }
+    }
+}
+
+extension CategoryColor {
+    static func getColor(_ color: String) -> Color {
+        for categoryColor in self.allCases {
+            if categoryColor.rawValue == color {
+                return categoryColor.color
+            }
+        }
+
+        return .blue
     }
 }

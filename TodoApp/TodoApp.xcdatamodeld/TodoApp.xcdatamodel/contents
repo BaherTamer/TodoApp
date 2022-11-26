@@ -2,7 +2,7 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="TodoCategory" representedClassName="TodoCategory" syncable="YES" codeGenerationType="category">
         <attribute name="color" attributeType="String"/>
-        <attribute name="dataCreated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateCreated" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="icon" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
     </entity>
