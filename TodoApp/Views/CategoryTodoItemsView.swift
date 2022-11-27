@@ -57,21 +57,18 @@ struct CategoryTodoItemsView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     ForEach(todoItems.filter({ !$0.isCompleted })) { todoItem in
-                        Text("○ " + todoItem.title!)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .padding(.bottom)
-                        .onTapGesture {
+                        TodoRow(todo: todoItem) {
                             updateTodoItemState(todoItem)
                         }
                     }
 
+                    if !todoItems.filter({$0.isCompleted}).isEmpty {
+                        Divider()
+                            .padding(.vertical)
+                    }
+
                     ForEach(todoItems.filter({ $0.isCompleted })) { todoItem in
-                        Text("◉ " + todoItem.title!)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .padding(.bottom)
-                        .onTapGesture {
+                        TodoRow(todo: todoItem) {
                             updateTodoItemState(todoItem)
                         }
                     }
