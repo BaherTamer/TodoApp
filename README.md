@@ -14,3 +14,6 @@ An iOS todo list app using one to many relation core data model.
 !<img src="Demo/AddEditCategory.gif" alt="Add & Edit a category list" width="200"/>
 !<img src="Demo/AddTaskDeleteCategoy.gif" alt="Add todo item & Delte a category list" width="200"/>
 !<img src="Demo/ShowClearCompleted.gif" alt="Show or Hide all completed tasks" width="200"/>
+
+# License
+**TodoApp** is under MIT license. See the [LICENSE](LICENSE) file for more info.
