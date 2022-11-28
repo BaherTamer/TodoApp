@@ -17,6 +17,19 @@ struct AddTodoCategoryView: View {
     @State private var categoryColor: CategoryColor = .blue
 
     private let screenWidth = UIScreen.main.bounds.size.width
+    private var todoCategoryToEdit: TodoCategory?
+
+    init(todoCategoryToEdit: TodoCategory? = nil) {
+        self.todoCategoryToEdit = todoCategoryToEdit
+    }
+
+    private func saveAddCategory() {
+        if let todoCategoryToEdit {
+            saveCategory(categoryToEdit: todoCategoryToEdit)
+        } else {
+            addCategory()
+        }
+    }
 
     private func addCategory() {
         let newCategory = TodoCategory(context: viewContext)
@@ -35,6 +48,20 @@ struct AddTodoCategoryView: View {
 
         newCategory.color = categoryColor.rawValue
 
+        saveContext()
+    }
+
+    private func saveCategory(categoryToEdit: TodoCategory) {
+        let updatedCategory = TodoCategory.getTodoCategoryById(categoryToEdit.objectID)
+
+        updatedCategory.name = name
+        updatedCategory.icon = icon
+        updatedCategory.color = categoryColor.rawValue
+
+        saveContext()
+    }
+
+    private func saveContext() {
         if viewContext.hasChanges {
             do {
                 try viewContext.save()
@@ -88,9 +115,20 @@ struct AddTodoCategoryView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Add") {
-                        addCategory()
+                    Button(todoCategoryToEdit != nil ? "Save" : "Add") {
+                        saveAddCategory()
                         dismiss()
+                    }
+                }
+            }
+        }.onAppear {
+            if let todoCategoryToEdit {
+                icon = todoCategoryToEdit.icon!
+                name = todoCategoryToEdit.name!
+
+                for color in CategoryColor.allCases {
+                    if color.rawValue == todoCategoryToEdit.color {
+                        categoryColor = color
                     }
                 }
             }

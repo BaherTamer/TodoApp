@@ -9,10 +9,12 @@ import SwiftUI
 
 struct CategoryTodoItemsView: View {
 
-    let todoCategory: TodoCategory
+    @ObservedObject var todoCategory: TodoCategory
 
     @Environment(\.managedObjectContext) var viewContext
     @FetchRequest var todoItems: FetchedResults<TodoItem>
+
+    @Environment(\.dismiss) var dismiss
 
     init(todoCategory: TodoCategory) {
         self.todoCategory = todoCategory
@@ -20,6 +22,8 @@ struct CategoryTodoItemsView: View {
     }
 
     @State private var showingAddTodoItemView: Bool = false
+    @State private var showCompleted: Bool = false
+    @State private var showingEditCategoryView: Bool = false
 
     private func addTodoItem(_ title: String) {
         let newTodoItem = TodoItem(context: viewContext)
@@ -42,6 +46,27 @@ struct CategoryTodoItemsView: View {
         saveContext()
     }
 
+    private func clearCompletedTodoItems() {
+        for todoItem in todoItems {
+            let deletedItem = TodoItem.getTodoItemById(todoItem.objectID)
+
+            if deletedItem.isCompleted {
+                viewContext.delete(deletedItem)
+            }
+        }
+
+        saveContext()
+    }
+
+    private func deleteTodoCategory() {
+        dismiss()
+        let deletedCategory = TodoCategory.getTodoCategoryById(todoCategory.objectID)
+        viewContext.delete(deletedCategory)
+
+        saveContext()
+        dismiss()
+    }
+
     private func saveContext() {
         if viewContext.hasChanges {
             do {
@@ -62,14 +87,16 @@ struct CategoryTodoItemsView: View {
                         }
                     }
 
-                    if !todoItems.filter({$0.isCompleted}).isEmpty {
-                        Divider()
-                            .padding(.vertical)
-                    }
+                    if showCompleted {
+                        if !todoItems.filter({$0.isCompleted}).isEmpty {
+                            Divider()
+                                .padding(.vertical)
+                        }
 
-                    ForEach(todoItems.filter({ $0.isCompleted })) { todoItem in
-                        TodoRow(todo: todoItem) {
-                            updateTodoItemState(todoItem)
+                        ForEach(todoItems.filter({ $0.isCompleted })) { todoItem in
+                            TodoRow(todo: todoItem) {
+                                updateTodoItemState(todoItem)
+                            }
                         }
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading)
@@ -82,27 +109,57 @@ struct CategoryTodoItemsView: View {
                     .font(.largeTitle)
                     .foregroundColor(.white)
                     .padding()
-                    .background(CategoryColor.getColor(todoCategory.color!).gradient)
+                    .background(CategoryColor.getColor(todoCategory.color ?? "blue").gradient)
                     .clipShape(Circle())
             }
         }
         .padding()
         .background(Color(UIColor.systemGray6), ignoresSafeAreaEdges: .all)
-        .navigationTitle("\(todoCategory.icon!) \(todoCategory.name!)")
+        .navigationTitle("\(todoCategory.icon ?? "📝") \(todoCategory.name ?? "New Category")")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    // TODO: Clear Completed, Show Completed, Delete Category, Edit Category
+                Menu {
+                    Button {
+                        showCompleted.toggle()
+                    } label: {
+                        Label(showCompleted ? "Hide Completed" : "Show Completed", systemImage: showCompleted ? "eye.slash" : "eye")
+                    }
+
+                    Button {
+                        showingEditCategoryView.toggle()
+                    } label: {
+                        Label("Edit Category", systemImage: "pencil")
+                    }
+
+                    Divider()
+
+                    Button(role: .destructive) {
+                        clearCompletedTodoItems()
+                    } label: {
+                        Label("Clear Completed", systemImage: "xmark")
+                    }
+
+                    Button(role: .destructive) {
+                        dismiss()
+                        deleteTodoCategory()
+                        dismiss()
+                    } label: {
+                        Label("Delete Category", systemImage: "trash")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+
             }
         }
         .sheet(isPresented: $showingAddTodoItemView) {
             AddTodoItemView { title in
                 addTodoItem(title)
             }
+        }
+        .sheet(isPresented: $showingEditCategoryView) {
+            AddTodoCategoryView(todoCategoryToEdit: todoCategory)
         }
     }
 }
