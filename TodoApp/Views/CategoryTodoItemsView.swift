@@ -86,18 +86,18 @@ struct CategoryTodoItemsView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            List {
-                Group {
+            ScrollView {
+                VStack(alignment: .leading) {
                     ForEach(todoItems.filter({ !$0.isCompleted })) { todoItem in
                         TodoRow(todo: todoItem) {
                             updateTodoItemState(todoItem)
-                        }/*.swipeActions {
+                        }.swipeActions {
                             Button(role: .destructive) {
                                 removeTodoItem(todoItem)
                             } label: {
                                 Label("Remove", systemImage: "trash")
                             }
-                        }*/
+                        }
                     }
 
                     if showCompleted {
@@ -109,18 +109,17 @@ struct CategoryTodoItemsView: View {
                         ForEach(todoItems.filter({ $0.isCompleted })) { todoItem in
                             TodoRow(todo: todoItem) {
                                 updateTodoItemState(todoItem)
-                            }/*.swipeActions {
-                              Button(role: .destructive) {
-                                  removeTodoItem(todoItem)
-                              } label: {
-                                  Label("Remove", systemImage: "trash")
-                              }
-                          }*/
+                            }.swipeActions {
+                                Button(role: .destructive) {
+                                    removeTodoItem(todoItem)
+                                } label: {
+                                    Label("Remove", systemImage: "trash")
+                                }
+                            }
                         }
                     }
-                }.listRowSeparator(.hidden).listRowBackground(Color(UIColor.systemGray6))
+                }.frame(maxWidth: .infinity, alignment: .leading)
             }
-            .listStyle(.plain)
 
             Button {
                 showingAddTodoItemView.toggle()
