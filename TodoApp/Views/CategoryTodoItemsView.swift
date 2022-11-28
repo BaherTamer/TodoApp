@@ -46,6 +46,13 @@ struct CategoryTodoItemsView: View {
         saveContext()
     }
 
+    private func removeTodoItem(_ todoItem: TodoItem) {
+        let removedItem = TodoItem.getTodoItemById(todoItem.objectID)
+        viewContext.delete(removedItem)
+
+        saveContext()
+    }
+
     private func clearCompletedTodoItems() {
         for todoItem in todoItems {
             let deletedItem = TodoItem.getTodoItemById(todoItem.objectID)
@@ -79,12 +86,18 @@ struct CategoryTodoItemsView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            ScrollView {
-                VStack(alignment: .leading) {
+            List {
+                Group {
                     ForEach(todoItems.filter({ !$0.isCompleted })) { todoItem in
                         TodoRow(todo: todoItem) {
                             updateTodoItemState(todoItem)
-                        }
+                        }/*.swipeActions {
+                            Button(role: .destructive) {
+                                removeTodoItem(todoItem)
+                            } label: {
+                                Label("Remove", systemImage: "trash")
+                            }
+                        }*/
                     }
 
                     if showCompleted {
@@ -96,11 +109,18 @@ struct CategoryTodoItemsView: View {
                         ForEach(todoItems.filter({ $0.isCompleted })) { todoItem in
                             TodoRow(todo: todoItem) {
                                 updateTodoItemState(todoItem)
-                            }
+                            }/*.swipeActions {
+                              Button(role: .destructive) {
+                                  removeTodoItem(todoItem)
+                              } label: {
+                                  Label("Remove", systemImage: "trash")
+                              }
+                          }*/
                         }
                     }
-                }.frame(maxWidth: .infinity, alignment: .leading)
+                }.listRowSeparator(.hidden).listRowBackground(Color(UIColor.systemGray6))
             }
+            .listStyle(.plain)
 
             Button {
                 showingAddTodoItemView.toggle()

@@ -17,11 +17,11 @@ struct TodoRow: View {
             Text(todo.isCompleted ? "◉" : "○")
             Text(todo.title ?? "Todo Item")
                 .foregroundColor(todo.isCompleted ? .secondary : .primary)
-                .strikethrough(todo.isCompleted, color: CategoryColor.getColor((todo.category?.color)!))
+                .strikethrough(todo.isCompleted, color: CategoryColor.getColor((todo.category?.color) ?? "gray"))
+            Spacer()
         }
         .font(.title3)
         .fontWeight(.semibold)
-        .padding(.bottom)
         .onTapGesture {
             updateTodoState()
         }
